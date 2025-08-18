@@ -25,18 +25,8 @@ This system streamlines communication between **Students, Mentors, HODs, and Adm
 
 ---
 
-## 📸 Screenshots
 
-_Add your screenshots in the `screenshots/` folder and replace below placeholders._
 
-![Student Dashboard](screenshots/student-dashboard.png)  
-![Mentor Dashboard](screenshots/mentor-dashboard.png)  
-![HOD Dashboard](screenshots/hod-dashboard.png)  
-![Admin Dashboard](screenshots/admin-dashboard.png)  
-
----
-
-## 🚀 Quick Start Guide
 
 Get started in **3 easy steps**:
 
