@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Outpass Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a3c5e;
+            --secondary-color: #2980b9;
+            --success-color: #27ae60;
+            --warning-color: #e67e22;
+            --danger-color: #c0392b;
+            --light-bg: #f5f7fa;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border-color: #dfe4ea;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
+            --card-bg: #ffffff;
+            --hover-bg: #f1f3f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5e81ac 0%, #81a1c1 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--danger-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .nav-container {
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            max-width: 150px;
+            padding: 1rem;
+            border: none;
+            background: var(--card-bg);
+            color: var(--dark-text);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            background: var(--hover-bg);
+        }
+
+        .nav-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .content-panel {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .panel-header {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h2 {
+            color: var(--dark-text);
+            font-size: 1.6rem;
+            font-weight: 500;
+        }
+
+        .panel-body {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .requests-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .request-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .request-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .request-card.emergency {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .request-card.approved {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .request-card.pending {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .card-header {
+            background: var(--light-bg);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .request-id {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.pending {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .badge.approved {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .badge.rejected {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .badge.emergency {
+            background: var(--danger-color);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--light-text);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            color: var(--dark-text);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--light-text);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .notification {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                max-width: none;
+            }
+
+            .form-grid,
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mt-3 { margin-top: 1.5rem; }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--light-text);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        .modal h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-id-card"></i> E-Outpass Management System</h1>
+        <p>Digital Leave Management for Educational Institutions</p>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </header>
+
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <button id="student-tab" class="nav-tab hidden" onclick="switchTab('student', this)">
+                <i class="fas fa-user-graduate"></i> Student Portal
+            </button>
+            <button id="mentor-tab" class="nav-tab hidden" onclick="switchTab('mentor', this)">
+                <i class="fas fa-chalkboard-teacher"></i> Mentor Dashboard
+            </button>
+            <button id="hod-tab" class="nav-tab hidden" onclick="switchTab('hod', this)">
+                <i class="fas fa-user-tie"></i> HOD Dashboard
+            </button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div id="student-panel" class="content-panel hidden">
+            <div class="panel-header">
+                <h2><i class="fas fa-plus-circle"></i> Submit New Leave Request</h2>
+            </div>
+            <div class="panel-body">
+                <form id="leaveRequestForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="studentName"><i class="fas fa-user"></i> Full Name</label>
+                            <input type="text" id="studentName" name="studentName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentId"><i class="fas fa-id-badge"></i> Hall Ticket Number</label>
+                            <input type="text" id="studentId" name="studentId" required placeholder="Enter hall ticket number">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentEmail"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="studentEmail" name="studentEmail" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentNumber"><i class="fas fa-phone-alt"></i> Student Number</label>
+                            <input type="tel" id="studentNumber" name="studentNumber" required placeholder="Enter your phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="parentNumber"><i class="fas fa-phone-square-alt"></i> Parent Number</label>
+                            <input type="tel" id="parentNumber" name="parentNumber" required placeholder="Enter parent's phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="department"><i class="fas fa-building"></i> Department</label>
+                            <select id="department" name="department" required>
+                                <option value="">Select Department</option>
+                                <option value="CSE">Computer Science & Engineering</option>
+                                <option value="ECE">Electronics & Communication</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mentorName"><i class="fas fa-chalkboard-teacher"></i> Mentor Name</label>
+                            <select id="mentorName" name="mentorName" required>
+                                <option value="">Select Mentor</option>
+                                <option value="Padma">Padma</option>
+                                <option value="Premalatha">Premalatha</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaveType"><i class="fas fa-exclamation-triangle"></i> Leave Type</label>
+                            <select id="leaveType" name="leaveType" required>
+                                <option value="">Select Leave Type</option>
+                                <option value="regular">Regular Leave</option>
+                                <option value="emergency">Emergency Leave</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fromDate"><i class="fas fa-calendar"></i> From Date</label>
+                            <input type="date" id="fromDate" name="fromDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="toDate"><i class="fas fa-calendar"></i> To Date</label>
+                            <input type="date" id="toDate" name="toDate" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="reason"><i class="fas fa-comment-alt"></i> Reason for Leave</label>
+                            <textarea id="reason" name="reason" rows="4" required placeholder="Provide detailed reason for leave..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                        <span class="btn-text"><i class="fas fa-paper-plane"></i> Submit Request</span>
+                        <span class="loading hidden"></span>
+                    </button>
+                </form>
+                <div class="panel-header mt-3">
+                    <h2><i class="fas fa-history"></i> Your Request History</h2>
+                </div>
+                <div class="requests-grid" id="studentHistory"></div>
+            </div>
+        </div>
+
+        <div id="mentor-panel" class="content-panel hidden">
+            <div class="panel-header">
+                <h2><i class="fas fa-tasks"></i> Mentor Dashboard - Pending Approvals</h2>
+            </div>
+            <div class="panel-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-clock stat-icon"></i>
+                        <div class="stat-number" id="mentorPendingCount">0</div>
+                        <div class="stat-label">Pending Requests</div>
+                    </div>
+                </div>
+                <div id="mentorRequests" class="requests-grid"></div>
+            </div>
+        </div>
+
+        <div id="hod-panel" class="content-panel hidden">
+            <div class="panel-header">
+                <h2><i class="fas fa-check-double"></i> HOD Dashboard - Final Approvals</h2>
+            </div>
+            <div class="panel-body">
+                <div id="hodRequests" class="requests-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notifications" style="position: fixed; top: 20px; right: 20px; z-index: 2000;"></div>
+
+    <div id="callParentModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalMessage"></h3>
+            <div class="modal-actions">
+                <a id="confirmCallBtn" href="#" class="btn btn-primary" style="text-decoration: none;">Confirm Call</a>
+                <button id="cancelCallBtn" class="btn btn-danger">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const AppState = {
+            requests: [],
+            currentTab: null,
+            requestIdCounter: 1001,
+            user: JSON.parse(localStorage.getItem('currentUser')) || null
+        };
+
+        const StorageService = {
+            loadState() {
+                const savedRequests = localStorage.getItem('requests');
+                if (savedRequests) {
+                    AppState.requests = JSON.parse(savedRequests);
+                }
+                const savedCounter = localStorage.getItem('requestIdCounter');
+                if (savedCounter) {
+                    AppState.requestIdCounter = parseInt(savedCounter, 10);
+                }
+            },
+            saveState() {
+                localStorage.setItem('requests', JSON.stringify(AppState.requests));
+                localStorage.setItem('requestIdCounter', AppState.requestIdCounter);
+            }
+        };
+
+        const Utils = {
+            generateId() {
+                return AppState.requestIdCounter++;
+            },
+            formatDate(date) {
+                return new Date(date).toLocaleDateString('en-IN');
+            },
+            formatDateTime(date) {
+                return new Date(date).toLocaleString('en-IN');
+            },
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    ${message}
+                `;
+                document.getElementById('notifications').appendChild(notification);
+                setTimeout(() => notification.remove(), 5000);
+            },
+            sanitizeInput(input) {
+                return input.replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+            }
+        };
+
+        const BackendService = {
+            async saveRequest(request) {
+                AppState.requests.push(request);
+                StorageService.saveState();
+                return { success: true, id: request.id };
+            },
+            async fetchRequests() {
+                return AppState.requests;
+            },
+            async updateRequest(requestId, updates) {
+                const request = AppState.requests.find(req => req.id === requestId);
+                if (request) {
+                    Object.assign(request, updates);
+                    StorageService.saveState();
+                    return { success: true };
+                }
+                return { success: false, error: 'Request not found' };
+            },
+            // NEW: Function to simulate sending emails
+            async sendEmailNotification(request, approverRole) {
+                const subject = `Leave Request #${request.id} Approved by ${approverRole}`;
+                const body = `
+Dear ${request.studentName},
+
+Your leave request for the period ${Utils.formatDate(request.fromDate)} to ${Utils.formatDate(request.toDate)} has been approved by the ${approverRole}.
+
+Please check the system for final status and details.
+
+Best regards,
+E-Outpass Management System
+                `;
+                console.log(`--- SIMULATING EMAIL ---`);
+                console.log(`TO: ${request.studentEmail}`);
+                console.log(`SUBJECT: ${subject}`);
+                console.log(`BODY:\n${body}`);
+                console.log(`------------------------`);
+            }
+        };
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        function initializeUIForRole() {
+            if (!AppState.user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.add('hidden'));
+
+            const roleTabMap = {
+                student: { tab: 'student-tab', panel: 'student-panel', dashboard: loadStudentPortal },
+                mentor: { tab: 'mentor-tab', panel: 'mentor-panel', dashboard: loadMentorDashboard },
+                hod: { tab: 'hod-tab', panel: 'hod-panel', dashboard: loadHODDashboard }
+            };
+
+            const { tab, panel, dashboard } = roleTabMap[AppState.user.role];
+            const tabElement = document.getElementById(tab);
+            tabElement.classList.remove('hidden');
+            tabElement.classList.add('active');
+            const panelElement = document.getElementById(panel);
+            panelElement.classList.remove('hidden');
+            AppState.currentTab = AppState.user.role;
+            dashboard();
+        }
+
+        function initializeForm() {
+            if (AppState.user.role !== 'student') return;
+            const form = document.getElementById('leaveRequestForm');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fromDate').min = today;
+            document.getElementById('toDate').min = today;
+
+            document.getElementById('fromDate').addEventListener('change', function() {
+                document.getElementById('toDate').min = this.value;
+            });
+            
+            document.getElementById('studentName').value = AppState.user.name;
+            document.getElementById('studentId').value = AppState.user.studentId;
+            document.getElementById('studentEmail').value = AppState.user.email;
+            document.getElementById('studentNumber').value = AppState.user.studentNumber;
+            document.getElementById('parentNumber').value = AppState.user.parentNumber;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleFormSubmission(new FormData(form));
+            });
+        }
+
+        function validateForm(formData) {
+            const fromDate = new Date(formData.get('fromDate'));
+            const toDate = new Date(formData.get('toDate'));
+
+            if (toDate < fromDate) {
+                Utils.showNotification('To Date cannot be before From Date.', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function handleFormSubmission(formData) {
+            if (!validateForm(formData)) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.querySelector('.btn-text').classList.add('hidden');
+            submitBtn.querySelector('.loading').classList.remove('hidden');
+
+            const request = {
+                id: Utils.generateId(),
+                studentName: Utils.sanitizeInput(formData.get('studentName')),
+                studentId: Utils.sanitizeInput(formData.get('studentId')),
+                studentEmail: Utils.sanitizeInput(formData.get('studentEmail')),
+                studentNumber: Utils.sanitizeInput(formData.get('studentNumber')),
+                parentNumber: Utils.sanitizeInput(formData.get('parentNumber')),
+                department: Utils.sanitizeInput(formData.get('department')),
+                mentorName: Utils.sanitizeInput(formData.get('mentorName')),
+                leaveType: Utils.sanitizeInput(formData.get('leaveType')),
+                fromDate: formData.get('fromDate'),
+                toDate: formData.get('toDate'),
+                reason: Utils.sanitizeInput(formData.get('reason')),
+                status: 'pending',
+                mentorApproval: null,
+                hodApproval: null,
+                submittedAt: new Date().toISOString(),
+                mentorApprovedAt: null,
+                hodApprovedAt: null
+            };
+
+            BackendService.saveRequest(request).then(result => {
+                if (result.success) {
+                    document.getElementById('leaveRequestForm').reset();
+                    initializeForm();
+                    Utils.showNotification(`Request #${request.id} submitted successfully!`, 'success');
+                    updateDashboards();
+                    loadStudentPortal();
+                }
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').classList.remove('hidden');
+                submitBtn.querySelector('.loading').classList.add('hidden');
+            });
+        }
+
+        function loadStudentPortal() {
+            if (AppState.user.role !== 'student') return;
+            renderStudentHistory();
+        }
+
+        function renderStudentHistory() {
+            const container = document.getElementById('studentHistory');
+            const requests = AppState.requests.filter(req => req.studentId === AppState.user.studentId);
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Requests Found</h3>
+                        <p>You haven't submitted any leave requests yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = requests.map(request => `
+                <div class="request-card ${request.status}">
+                    <div class="card-header">
+                        <div class="request-id">Request #${request.id}</div>
+                        <div class="status-badges">
+                            <span class="badge ${request.status}">${request.status}</span>
+                            ${request.leaveType === 'emergency' ? '<span class="badge emergency">Emergency</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Leave Type</span>
+                                <span class="detail-value">${request.leaveType}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Period</span>
+                                <span class="detail-value">${Utils.formatDate(request.fromDate)} to ${Utils.formatDate(request.toDate)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Mentor</span>
+                                <span class="detail-value">${request.mentorName}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadMentorDashboard() {
+            if (AppState.user.role !== 'mentor') return;
+            const requests = AppState.requests.filter(req => 
+                req.status === 'pending' && 
+                req.mentorName.toLowerCase() === AppState.user.name.toLowerCase()
+            );
+            document.getElementById('mentorPendingCount').textContent = requests.length;
+            renderMentorRequests(requests);
+        }
+
+        function renderMentorRequests(requests) {
+            const container = document.getElementById('mentorRequests');
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Pending Requests</h3>
+                        <p>All caught up!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = requests.map(request => `
+                <div class="request-card ${request.leaveType === 'emergency' ? 'emergency' : 'pending'}">
+                    <div class="card-header">
+                        <div class="request-id">Request #${request.id}</div>
+                        <div class="status-badges">
+                            <span class="badge pending">Pending</span>
+                            ${request.leaveType === 'emergency' ? '<span class="badge emergency">Emergency</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Student</span>
+                                <span class="detail-value">${request.studentName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Leave Type</span>
+                                <span class="detail-value">${request.leaveType}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Period</span>
+                                <span class="detail-value">${Utils.formatDate(request.fromDate)} to ${Utils.formatDate(request.toDate)}</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-success" onclick="mentorApprove(${request.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="mentorReject(${request.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                            <button class="btn btn-primary" onclick="showCallParentModal('${request.studentName}', '${request.parentNumber}')">
+                                <i class="fas fa-phone-alt"></i> Call Parent
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function mentorApprove(requestId) {
+            BackendService.updateRequest(requestId, {
+                status: 'mentor-approved',
+                mentorApproval: 'approved',
+                mentorApprovedAt: new Date().toISOString()
+            }).then(() => {
+                const request = AppState.requests.find(req => req.id === requestId);
+                if (request) {
+                    BackendService.sendEmailNotification(request, 'Mentor');
+                }
+                Utils.showNotification(`Request #${requestId} approved.`, 'success');
+                updateDashboards();
+            });
+        }
+
+        function mentorReject(requestId) {
+            BackendService.updateRequest(requestId, {
+                status: 'rejected',
+                mentorApproval: 'rejected',
+                mentorApprovedAt: new Date().toISOString()
+            }).then(() => {
+                Utils.showNotification(`Request #${requestId} rejected.`, 'error');
+                updateDashboards();
+            });
+        }
+
+        function loadHODDashboard() {
+            if (AppState.user.role !== 'hod') return;
+            const requests = AppState.requests.filter(req => req.status === 'mentor-approved');
+            renderHODRequests(requests);
+        }
+
+        function renderHODRequests(requests) {
+            const container = document.getElementById('hodRequests');
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>No Pending Approvals</h3>
+                        <p>All mentor-approved requests have been processed.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = requests.map(request => `
+                <div class="request-card pending">
+                    <div class="card-header">
+                        <div class="request-id">Request #${request.id}</div>
+                        <div class="status-badges">
+                            <span class="badge approved">Mentor Approved</span>
+                            <span class="badge pending">Awaiting HOD</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Student</span>
+                                <span class="detail-value">${request.studentName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Mentor</span>
+                                <span class="detail-value">${request.mentorName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Period</span>
+                                <span class="detail-value">${Utils.formatDate(request.fromDate)} to ${Utils.formatDate(request.toDate)}</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-success" onclick="hodApprove(${request.id})">
+                                <i class="fas fa-check-double"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="hodReject(${request.id})">
+                                <i class="fas fa-ban"></i> Reject
+                            </button>
+                            <button class="btn btn-primary" onclick="showCallParentModal('${request.studentName}', '${request.parentNumber}')">
+                                <i class="fas fa-phone-alt"></i> Call Parent
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function hodApprove(requestId) {
+            BackendService.updateRequest(requestId, {
+                status: 'approved',
+                hodApproval: 'approved',
+                hodApprovedAt: new Date().toISOString()
+            }).then(() => {
+                const request = AppState.requests.find(req => req.id === requestId);
+                if (request) {
+                    BackendService.sendEmailNotification(request, 'HOD');
+                }
+                Utils.showNotification(`Request #${requestId} approved.`, 'success');
+                updateDashboards();
+            });
+        }
+
+        function hodReject(requestId) {
+            BackendService.updateRequest(requestId, {
+                status: 'rejected',
+                hodApproval: 'rejected',
+                hodApprovedAt: new Date().toISOString()
+            }).then(() => {
+                Utils.showNotification(`Request #${requestId} rejected.`, 'error');
+                updateDashboards();
+            });
+        }
+
+        function updateDashboards() {
+            if (AppState.currentTab === 'student') loadStudentPortal();
+            else if (AppState.currentTab === 'mentor') loadMentorDashboard();
+            else if (AppState.currentTab === 'hod') loadHODDashboard();
+        }
+
+        StorageService.loadState();
+        initializeUIForRole();
+        initializeForm();
+
+        function showCallParentModal(studentName, parentNumber) {
+            const modal = document.getElementById('callParentModal');
+            const message = document.getElementById('modalMessage');
+            const confirmBtn = document.getElementById('confirmCallBtn');
+
+            message.textContent = `Can I call ${studentName}'s parent: ${parentNumber}?`;
+            confirmBtn.href = `tel:${parentNumber}`;
+            modal.classList.add('show');
+        }
+
+        document.getElementById('cancelCallBtn').addEventListener('click', () => {
+            document.getElementById('callParentModal').classList.remove('show');
+        });
+    </script>
+</body>
+</html>

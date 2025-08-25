@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Outpass Management System - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a3c5e;
+            --secondary-color: #2980b9;
+            --success-color: #27ae60;
+            --danger-color: #c0392b;
+            --light-bg: #f5f7fa;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border-color: #dfe4ea;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5e81ac 0%, #81a1c1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-container h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .notification {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+
+            .login-container h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1><i class="fas fa-id-card"></i> E-Outpass Management System</h1>
+        <div id="notification"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Username (Roll Number / Email)</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label for="role"><i class="fas fa-user-tag"></i> Role</label>
+                <select id="role" name="role" required>
+                    <option value="">Select Role</option>
+                    <option value="student">Student</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="hod">HOD</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" id="loginBtn" disabled>
+                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Loading...</span>
+                <span class="loading"></span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Simple SHA-256 hash function for demo
+        async function hashPassword(password) {
+            const msgBuffer = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Mock user database with hashed passwords
+        const mockUsers = [];
+
+        // Function to generate all users
+        async function generateUsers() {
+            // Students: username = roll number, password = roll number
+            for (let i = 1; i <= 66; i++) {
+                const rollNumber = `23TP1A66${String(i).padStart(2, '0')}`;
+                mockUsers.push({
+                    username: rollNumber,
+                    passwordHash: await hashPassword(rollNumber),
+                    role: "student",
+                    studentId: rollNumber,
+                    name: `Student Name ${i}`,
+                    email: `student${i}@example.com`,
+                    studentNumber: `98765432${i}`,
+                    parentNumber: `87654321${i}`
+                });
+            }
+
+            for (let i = 1; i <= 5; i++) {
+                const rollNumber = `24TP5A660${i}`;
+                mockUsers.push({
+                    username: rollNumber,
+                    passwordHash: await hashPassword(rollNumber),
+                    role: "student",
+                    studentId: rollNumber,
+                    name: `Student Name ${66 + i}`,
+                    email: `student${66 + i}@example.com`,
+                    studentNumber: `98765432${66 + i}`,
+                    parentNumber: `87654321${66 + i}`
+                });
+            }
+
+            // HOD and Mentor accounts
+            mockUsers.push(
+                { username: "bharanisethupadiyan@gmail.com", passwordHash: await hashPassword("bharani@123"), role: "hod", name: "HOD Bharani" },
+                { username: "padma123@gmail.com", passwordHash: await hashPassword("padma@123"), role: "mentor", name: "Padma" },
+                { username: "premalatha123@gmail.com", passwordHash: await hashPassword("premalatha@123"), role: "mentor", name: "Premalatha" }
+            );
+            console.log("Mock user database loaded for testing.");
+
+            // NEW CHANGE: Make the button ready after loading is complete
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = false;
+            loginBtn.querySelector('.btn-text').innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            loginBtn.querySelector('.loading').classList.add('hidden');
+        }
+
+        const Utils = {
+            showNotification(message, type = 'error') {
+                const notification = document.getElementById('notification');
+                notification.innerHTML = `
+                    <div class="notification ${type}">
+                        <i class="fas fa-exclamation-circle"></i>
+                        ${message}
+                    </div>
+                `;
+                setTimeout(() => notification.innerHTML = '', 5000);
+            },
+            sanitizeInput(input) {
+                return input.replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+            }
+        };
+
+        const AuthService = {
+            async login(username, password, role) {
+                const hashedPassword = await hashPassword(password);
+                const user = mockUsers.find(u => 
+                    // NEW CHANGE: Make the comparison case-insensitive
+                    u.username.toLowerCase() === username.toLowerCase() &&
+                    u.passwordHash === hashedPassword &&
+                    u.role === role
+                );
+                return user ? { success: true, user } : { success: false, error: 'Invalid credentials or role' };
+            }
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = true;
+            loginBtn.querySelector('.btn-text').innerHTML = '<span class="loading"></span>';
+            loginBtn.querySelector('.loading').classList.remove('hidden');
+
+            const formData = new FormData(this);
+            const username = formData.get('username');
+            const password = formData.get('password');
+            const role = formData.get('role');
+
+            const result = await AuthService.login(username, password, role);
+            if (result.success) {
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                window.location.href = 'main.html';
+            } else {
+                Utils.showNotification(result.error, 'error');
+                loginBtn.disabled = false;
+                loginBtn.querySelector('.btn-text').innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                loginBtn.querySelector('.loading').classList.add('hidden');
+            }
+        });
+
+        // Initialize the mock user data when the page loads
+        window.onload = generateUsers;
+    </script>
+</body>
+</html>
